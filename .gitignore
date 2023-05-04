@@ -3,3 +3,5 @@ __pycache__
 log/
 memo/
 secret.py
+*.jpg
+thumbnail_*/
