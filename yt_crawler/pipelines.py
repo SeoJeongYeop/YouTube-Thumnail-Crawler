@@ -18,8 +18,17 @@ from .secret import *
 
 class YtCrawlerPipeline:
     def process_item(self, item, spider):
-        
-        if type(item) == YoutubeChannelItem :
+        if type(item) == YoutubeVideoItem :
+            column_list = ["video_id", "published_at", "channel_id", "title", "description", "channel_title", "tags", "thumbnail_default", "thumbnail_medium", "thumbnail_high", "thumbnail_standard", "thumbnail_maxres", "view_count", "like_count", "comment_count", "period_day", "crawled_at"]
+
+            columns = ",".join(column_list)
+            insert_sql = f'''INSERT INTO video_thumbnail({columns}) 
+            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+            insert_arg = []
+            for column in column_list :
+                insert_arg.append(item[column])
+
+        elif type(item) == YoutubeChannelItem :
             # 채널명과 설명에서 이모지 제거
             # item['title'] = emoji_filter.sub(r'', item['title'])
             # item['description'] = emoji_filter.sub(r'', item['description'])
@@ -28,14 +37,15 @@ class YtCrawlerPipeline:
             VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
             
             insert_arg = [item['channel_id'], item['title'], item['description'], item['published_at'], item['view_count'], item['subscriber_count'], item['video_count'], item['country'], item['crawled_at'], item['period_day']]
-        if type(item) == YoutubeVideoIdItem :
+        elif type(item) == YoutubeVideoIdItem :
             insert_sql = '''INSERT INTO channel_video(video_id, channel_id, query, crawled_at) 
             VALUES(%s, %s, %s, %s)'''
             insert_arg = [item['video_id'], item['channel_id'], item['query'], item['crawled_at']]
-        if type(item) == YoutubePlayListIdItem :
+        elif type(item) == YoutubePlayListIdItem :
             insert_sql = '''INSERT INTO channel_playlist(playlist_id, start_video_id, channel_id, crawled_at) 
             VALUES(%s, %s, %s, %s, %s)'''
             insert_arg = [item['video_id'], item['start_video_id'], item['channel_id'], item['query'], item['crawled_at']]
+
         try :
             self.cursor.execute(insert_sql, insert_arg)
             self.crawlDB.commit()
