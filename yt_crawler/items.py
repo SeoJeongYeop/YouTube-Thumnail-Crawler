@@ -13,7 +13,7 @@ class YtCrawlerItem(scrapy.Item):
 
 class YoutubeVideoItem(scrapy.Item) :
     video_id = scrapy.Field()
-    channelId = scrapy.Field()
+    channel_id = scrapy.Field()
     title = scrapy.Field()
     desc = scrapy.Field()
     date = scrapy.Field()
@@ -23,8 +23,19 @@ class YoutubeVideoItem(scrapy.Item) :
     thumnail_low = scrapy.Field()
     thumnail_medium = scrapy.Field()
     thumnail_high = scrapy.Field()
-    
-    
+
+class YoutubeVideoIdItem(scrapy.Item) :
+    video_id = scrapy.Field()
+    channel_id = scrapy.Field()
+    query = scrapy.Field()
+    crawled_at = scrapy.Field()
+
+class YoutubePlayListIdItem(scrapy.Item) :
+    playlist_id = scrapy.Field()
+    start_video_id = scrapy.Field()
+    channel_id = scrapy.Field()
+    query = scrapy.Field()
+    crawled_at = scrapy.Field()
 
 class YoutubeChannelItem(scrapy.Item) :
     channel_id = scrapy.Field()
