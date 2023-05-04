@@ -63,7 +63,7 @@ class ChannelSpider(scrapy.Spider):
         # Parse Snippet
         snippet = data['snippet']
         item['title'] = snippet['title']
-        item['description'] = snippet['description']
+        item['description'] = snippet['description'] if 'description' in snippet else None
 
         published_at = None
         # datetime 형식이 동일하지 않아 통일하는 작업 필요
@@ -81,7 +81,7 @@ class ChannelSpider(scrapy.Spider):
                 pass
         
         item['published_at'] = published_at
-        item['country'] = snippet['country']
+        item['country'] = snippet['country'] if 'country' in snippet else None
         # print("snippet", snippet)
         
         # Parse Statistics
