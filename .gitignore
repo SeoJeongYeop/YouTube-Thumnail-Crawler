@@ -5,3 +5,4 @@ memo/
 secret.py
 *.jpg
 thumbnail_*/
+*.zip

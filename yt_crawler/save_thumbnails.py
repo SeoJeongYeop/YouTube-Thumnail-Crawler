@@ -26,9 +26,10 @@ except :
     sys.exit(1)
 
 # Thumbnail 링크가 저장된 column을 불러와서 디렉토리를 만들고자함.
-sql_stat = '''SELECT  COLUMN_NAME
+table_name = "video_thumbnail_0506"
+sql_stat = f'''SELECT  COLUMN_NAME
             FROM    INFORMATION_SCHEMA.COLUMNS
-            WHERE   TABLE_NAME = 'video_thumbnail';'''
+            WHERE   TABLE_NAME = '{table_name}';'''
 print("cursor.execute(sql_stat)", sql_stat)
 cursor.execute(sql_stat)
 results = cursor.fetchall()
@@ -44,12 +45,13 @@ for result in results:
         if not os.path.exists(result_col):
             os.makedirs(result_col)
 
-
+target_col_list.remove('thumbnail_maxres')
 target_cols = ",".join(target_col_list) 
-# thumbnail_default, thumbnail_medium, thumbnail_high,  thumbnail_standard, thumbnail_maxre
+
+# thumbnail_default, thumbnail_medium, thumbnail_high,  thumbnail_standard, thumbnail_maxres
 
 # 썸네일 이미지 링크 가져오기
-sql_stat = f'''SELECT video_id, {target_cols} FROM video_thumbnail;'''
+sql_stat = f'''SELECT video_id, {target_cols} FROM {table_name};'''
 print("cursor.execute(sql_stat)", sql_stat)
 cursor.execute(sql_stat)
 results = cursor.fetchall()
@@ -65,3 +67,6 @@ for result in tqdm(results):
             # 썸네일 이미지 저장
             image = Image.open(BytesIO(response.content))
             image.save(f"{target_col_list[idx]}/{col_name_list[idx]}_{video_id}.jpg")
+
+crawlDB.close()
+print("Done")
