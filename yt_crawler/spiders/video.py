@@ -52,10 +52,11 @@ class VideoSpider(scrapy.Spider):
                 snippet = element['snippet']
                 item['published_at'] = snippet['publishedAt']
                 item['channel_id'] = snippet['channelId']
-                item['title'] = snippet['title']
-                item['description'] = snippet['description'] if 'description' in snippet else None
-                item['channel_title'] = snippet['channelTitle']
-                item['tags'] = ",".join(snippet['tags']) if 'tags' in snippet else None
+                item['title'] = snippet['title'].replace(',', '')
+                item['description'] = snippet['description'].replace(',', '') if 'description' in snippet else None
+                item['channel_title'] = snippet['channelTitle'].replace(',', '')
+                item['tags'] = "|".join(snippet['tags']) if 'tags' in snippet else None
+                item['category_id'] = snippet['categoryId'] if 'categoryId' in snippet else None
 
                 thumbnails = snippet['thumbnails']
                 item['thumbnail_default'] = thumbnails['default']['url']

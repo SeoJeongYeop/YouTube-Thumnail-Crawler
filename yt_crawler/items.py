@@ -20,6 +20,7 @@ class YoutubeVideoItem(scrapy.Item) :
     description = scrapy.Field()
     channel_title = scrapy.Field()
     tags = scrapy.Field()
+    category_id = scrapy.Field()
     
     #snippet - thumbnails
     thumbnail_default = scrapy.Field()

@@ -19,11 +19,12 @@ from .secret import *
 class YtCrawlerPipeline:
     def process_item(self, item, spider):
         if type(item) == YoutubeVideoItem :
-            column_list = ["video_id", "published_at", "channel_id", "title", "description", "channel_title", "tags", "thumbnail_default", "thumbnail_medium", "thumbnail_high", "thumbnail_standard", "thumbnail_maxres", "view_count", "like_count", "comment_count", "period_day", "crawled_at"]
-
+            table_name="video_thumbnail_0506"
+            column_list = ["video_id", "published_at", "channel_id", "title", "description", "channel_title", "tags", "category_id", "thumbnail_default", "thumbnail_medium", "thumbnail_high", "thumbnail_standard", "thumbnail_maxres", "view_count", "like_count", "comment_count", "period_day", "crawled_at"]
             columns = ",".join(column_list)
-            insert_sql = f'''INSERT INTO video_thumbnail({columns}) 
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+            values = ["%s"] * len(column_list)
+            values = ",".join(values)
+            insert_sql = f'''INSERT INTO {table_name}({columns}) VALUES({values})'''
             insert_arg = []
             for column in column_list :
                 insert_arg.append(item[column])
@@ -32,14 +33,23 @@ class YtCrawlerPipeline:
             # 채널명과 설명에서 이모지 제거
             # item['title'] = emoji_filter.sub(r'', item['title'])
             # item['description'] = emoji_filter.sub(r'', item['description'])
-
-            insert_sql = '''INSERT INTO channel(channel_id, title, description, published_at, view_count, subscriber_count, video_count, country, crawled_at, period_day) 
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
-            
+            table_name="channel"
+            column_list = ["channel_id", "title", "description", "published_at", "view_count", "subscriber_count", "video_count", "country", "crawled_at", "period_day"]
+            columns = ",".join(column_list)
+            values = ["%s"] * len(column_list)
+            values = ",".join(values)
+            insert_sql = '''INSERT INTO {table_name}({columns}) VALUES({values})'''
+            insert_arg = []
+            for column in column_list :
+                insert_arg.append(item[column])
             insert_arg = [item['channel_id'], item['title'], item['description'], item['published_at'], item['view_count'], item['subscriber_count'], item['video_count'], item['country'], item['crawled_at'], item['period_day']]
         elif type(item) == YoutubeVideoIdItem :
-            insert_sql = '''INSERT INTO channel_video(video_id, channel_id, query, crawled_at) 
-            VALUES(%s, %s, %s, %s)'''
+            table_name="channel_video_0506"
+            column_list = ["video_id", "channel_id", "query", "crawled_at"]
+            columns = ",".join(column_list)
+            values = ["%s"] * len(column_list)
+            values = ",".join(values)
+            insert_sql = f'''INSERT INTO {table_name}({columns}) VALUES({values})'''
             insert_arg = [item['video_id'], item['channel_id'], item['query'], item['crawled_at']]
         elif type(item) == YoutubePlayListIdItem :
             insert_sql = '''INSERT INTO channel_playlist(playlist_id, start_video_id, channel_id, crawled_at) 
